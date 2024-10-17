@@ -10,15 +10,18 @@ OS = $(shell uname)
 REPORT = report
 INSTALL_DIR = build
 ccFiles = $(shell find . -name "*.cc")
+cppFiles = $(shell find . -name "*.cpp")
 headFiles = $(shell find . -name "*.h")
 DOXYGEN = doxygen
 DOXYFILE = Doxyfile
 
 ifeq ($(OS), Linux)
+	OPEN_RUN = ./$(INSTALL_DIR)/$(PROJECT)
 	OPEN_CMD = xdg-open
 	LIBFLAGS = $(shell pkg-config --cflags --libs gtest) -lgtest_main
 endif
 ifeq ($(OS), Darwin)
+	OPEN_RUN = open $(INSTALL_DIR)/$(PROJECT).app
 	OPEN_CMD = open
 	LIBFLAGS = -lgtest -lgmock -pthread
 endif
@@ -29,34 +32,30 @@ all: clean clang-format $(PROJECT).a test install
 
 install: clean uninstall
 	mkdir $(INSTALL_DIR)
-	cd $(INSTALL_DIR) && qmake ../3DViewer && make
-
-app_run: 
-	./$(INSTALL_DIR)/$(PROJECT)
+	cd $(INSTALL_DIR) && qmake ../$(PROJECT) && make
 
 uninstall:
 	rm -rf $(INSTALL_DIR)
 
 clean: 
 	rm -rf $(EXECUTABLE) $(PROJECT).a $(PROJECT)_test.a *.gcda *.gcno *.info
-	rm -rf $(REPORT)
-	rm -rf $(INSTALL_DIR)
+	rm -rf $(REPORT) docs/
 
-dvi: $(DOXYFILE)
-	$(DOXYGEN) $(DOXYFILE)
-	open $(DOCS_DIR)
+dvi: 
+
+	doxygen Doxyfile && open docs/html/index.html
 
 dist: install uninstall
-	rm -rf dist-molliekh-3DViewer.tar.gz
-	tar -czf dist-molliekh-3DViewer.tar.gz *
+	rm -rf dist-develop-3DViewer.tar.gz
+	tar -czf dist-develop-3DViewer.tar.gz *
 
 tests: clang-format $(PROJECT).a $(TESTS)
 	$(CC) $(CFLAGS) $(TESTS) -L. $(PROJECT).a $(LIBFLAGS) -o $(EXECUTABLE)
 	clear
 	./$(EXECUTABLE)
 
-run: $(INSTALL_DIR)/$(PROJECT).app
-	$(OPEN_CMD) $^
+run:
+	$(OPEN_RUN)
 
 gcov_report: clean clang-format $(SOURCES) $(PROJECT)_test.a
 	$(CC) $(CFLAGS) $(SOURCES) --coverage -L. $(PROJECT)_test.a $(LIBFLAGS) -o $(EXECUTABLE)
@@ -78,7 +77,7 @@ $(PROJECT)_test.a:$(OBJECTS_TESTS)
 %.o: %.cc
 	$(CC) $(CFLAGS) -c $< -o $@
 
-clang-format: $(ccFiles) $(headFiles)
+clang-format: $(ccFiles) $(cppFiles) $(headFiles)
 ifeq ("","$(wildcard ./.clang-format)") # если файла нет, копируем его.
 	cp -f ../materials/linters/.clang-format .
 endif

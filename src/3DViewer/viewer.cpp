@@ -3,22 +3,18 @@
 
 #include <iostream>
 
-Viewer::Viewer(QWidget *parent) : QOpenGLWidget{parent}, controller_() {
-}
-Viewer::~Viewer()
-{
-}
+Viewer::Viewer(QWidget *parent) : QOpenGLWidget{parent}, controller_() {}
 void Viewer::initializeGL() { initializeOpenGLFunctions(); }
 
 void Viewer::parseOBJ() {
   free_data();
-  controller_.Parser(name_to_file); // парсим файл
+  controller_.Parser(name_to_file);  // парсим файл
   number_of_vertices = controller_.GetNumberVertices();
   number_of_lines = controller_.GetNumberFacets();
   controller_.CenterVertices();
   controller_.InitialScale();
-  vertices = controller_.GetVertices();
-  facets = controller_.GetFacets();
+  vertices_ = controller_.GetVertices();
+  facets_ = controller_.GetFacets();
 }
 
 void Viewer::paintGL() {
@@ -36,7 +32,7 @@ void Viewer::initOpenGL() {
 }
 
 void Viewer::drawPoints() {
-  glVertexPointer(3, GL_DOUBLE, 0, vertices.data());
+  glVertexPointer(3, GL_DOUBLE, 0, vertices_.data());
   glPointSize(point_size / 5.0f);
   if (point_type == 0) {
     glEnable(GL_POINT_SMOOTH);
@@ -45,7 +41,7 @@ void Viewer::drawPoints() {
     glEnableClientState(GL_VERTEX_ARRAY);
     // Устанавливаем цвет для всех вершин
     glColor3f(point_color.redF(), point_color.greenF(), point_color.blueF());
-    glDrawArrays(GL_POINTS, 0, vertices.size());
+    glDrawArrays(GL_POINTS, 0, vertices_.size());
     glDisableClientState(GL_VERTEX_ARRAY);
   }
   if (point_type == 0) {
@@ -65,8 +61,9 @@ void Viewer::drawLines() {
       glEnableClientState(GL_VERTEX_ARRAY);
       // Устанавливаем цвет линий:
       glColor3f(line_color.redF(), line_color.greenF(), line_color.blueF());
-      // Отрисовываем линии с использованием индексов из массива граней (facets):
-      glDrawElements(GL_LINES, facets.size(), GL_UNSIGNED_INT, facets.data());
+      // Отрисовываем линии с использованием индексов из массива граней
+      // (facets):
+      glDrawElements(GL_LINES, facets_.size(), GL_UNSIGNED_INT, facets_.data());
       // Отключаем состояние массива вершин:
       glDisableClientState(GL_VERTEX_ARRAY);
       // Отключаем прерывистую линию, если она была включена:
@@ -77,7 +74,6 @@ void Viewer::drawLines() {
   }
 }
 
-
 void Viewer::shift_view(double shifted, int ax) {
   if (ax == 0) {
     controller_.Shift(shifted, 0, 0);
@@ -86,22 +82,19 @@ void Viewer::shift_view(double shifted, int ax) {
   } else {
     controller_.Shift(0, 0, shifted);
   }
-  vertices = controller_.GetVertices();
+  vertices_ = controller_.GetVertices();
   update();
-  //subject->CreateMessage("Shift object!");
 }
 void Viewer::scale_view(double scale) {
   controller_.Scale(scale);
-  vertices = controller_.GetVertices();
+  vertices_ = controller_.GetVertices();
   update();
-  //subject->CreateMessage("Change scale!");
 }
 
 void Viewer::rotate_view(double degrees, int ax) {
   controller_.Rotate(degrees, ax);
-  vertices = controller_.GetVertices();
+  vertices_ = controller_.GetVertices();
   update();
-  //subject->CreateMessage("Rotate object!");
 }
 
 void Viewer::projection_view() {
@@ -114,7 +107,4 @@ void Viewer::projection_view() {
   }
 }
 
-
-void Viewer::free_data() {
-  controller_.ClearObj();
-}
+void Viewer::free_data() { controller_.ClearObj(); }

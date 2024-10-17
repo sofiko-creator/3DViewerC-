@@ -17,9 +17,11 @@ MainWindow::~MainWindow() {
 
 void MainWindow::on_open_button_clicked() {
   const char *homeDir = std::getenv("HOME");
-  std::ofstream outFile(std::string(homeDir) + "/CPP4_3DViewer_v2.0-1/src/log.txt", std::ios::trunc);  
+  std::ofstream outFile(
+      std::string(homeDir) + "/CPP4_3DViewer_v2.0-1/src/log.txt",
+      std::ios::trunc);
   if (outFile) {
-    outFile << "";  
+    outFile << "";
     outFile.close();
   }
   QString str;
@@ -164,7 +166,6 @@ void MainWindow::saveSettings() {
   settings.setValue("Line Color", ui->widget->line_color);
   settings.endGroup();
 }
-
 
 void MainWindow::loadSettings() {
   QSettings settings(QCoreApplication::applicationDirPath() + "/settings.ini",

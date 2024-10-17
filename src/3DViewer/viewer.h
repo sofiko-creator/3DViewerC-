@@ -12,7 +12,6 @@ class Viewer : public QOpenGLWidget, public QOpenGLFunctions {
   Q_OBJECT
  public:
   explicit Viewer(QWidget *parent = nullptr);
-  ~Viewer();
 
   QColor bg_color = Qt::white;
   QColor line_color = Qt::black;
@@ -30,11 +29,11 @@ class Viewer : public QOpenGLWidget, public QOpenGLFunctions {
   void projection_view();
   int number_of_vertices;
   int number_of_lines;
-  std::vector<s21::Model::Vertex> vertices;
-  std::vector<unsigned int> facets;
   void free_data();
 
  protected:
+  std::vector<s21::Vertex> vertices_;
+  std::vector<unsigned int> facets_;
   s21::Controller controller_;
   void initializeGL() override;
   void paintGL() override;

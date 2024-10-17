@@ -58,9 +58,7 @@ class Controller {
     subject->CreateMessage("Rotate object!");
   }
 
-  std::vector<s21::Model::Vertex> GetVertices() const {
-    return model_->GetVertices();
-  }
+  std::vector<s21::Vertex> GetVertices() const { return model_->GetVertices(); }
 
   std::vector<unsigned int> GetFacets() const { return model_->GetFacets(); }
 

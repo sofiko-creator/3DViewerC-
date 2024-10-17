@@ -1,5 +1,10 @@
 QT       += core gui
-QT       += openglwidgets
+
+macx {
+    message("Компиляция для macOS")
+    # Специфичные настройки для macOS
+    QT       += openglwidgets
+}
 
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 

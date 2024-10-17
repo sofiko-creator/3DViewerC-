@@ -5,7 +5,7 @@ s21::Model* s21::Model::instance = nullptr;
 
 s21::Model::Model() : number_vertices_(0), number_facets_(0) {}
 
-s21::Model::~Model() {}
+s21::Model::~Model() { ClearObj(); }
 
 // Методы
 
@@ -38,7 +38,7 @@ void s21::Model::ParseLineV(const std::string line) {
 }
 
 void s21::Model::ParseLineF(const std::string line) {
-  int num_vertices_on_current_face = 0;  //количество вершин на текущей грани
+  int num_vertices_on_current_face = 0;  // количество вершин на текущей грани
   std::vector<int> vertices_indexes;
   ScanLineF(line, &num_vertices_on_current_face, vertices_indexes);
 
@@ -116,24 +116,6 @@ void s21::Model::ScanLineF(std::string line, int* num_vertices_on_current_face,
       break;
       throw std::runtime_error("Ошибка чтения данных из строки F: " + line);
     }
-  }
-}
-
-void s21::Model::PrintVertices() {
-  for (size_t i = 0; i < vertices_.size(); i++) {
-    std::cout << "Vertex " << i + 1 << "(" << vertices_[i].x << "; "
-              << vertices_[i].y << "; " << vertices_[i].z << ')' << std::endl;
-  }
-}
-
-void s21::Model::PrintFacets() {
-  if (facets_.empty()) {
-    std::cout << "Empty" << std::endl;
-  } else {
-    for (size_t i = 0; i < facets_.size(); i++) {
-      std::cout << facets_[i] << " ";
-    }
-    std::cout << std::endl;
   }
 }
 
@@ -247,7 +229,7 @@ int s21::Model::GetNumberVertices() const { return number_vertices_; }
 
 int s21::Model::GetNumberFacets() const { return number_facets_; }
 
-const std::vector<s21::Model::Vertex>& s21::Model::GetVertices() const {
+const std::vector<s21::Vertex>& s21::Model::GetVertices() const {
   return vertices_;
 }
 
